@@ -1,0 +1,677 @@
+/* ================================================================
+   GST Calculator Pro — style.css  v3.0
+   Author    : Shivam Soni
+   Copyright : © 2024 Shivam Soni. All rights reserved.
+   License   : MIT — keep this header intact if reusing.
+   ----------------------------------------------------------------
+   CA-Verified: IGST / CGST+SGST / CGST+UTGST / Cess support
+   ================================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap');
+
+/* ── Design Tokens — Shivam Soni ────────────────────────── */
+:root {
+  --accent:        #2563EB;
+  --accent-dark:   #1D4ED8;
+  --accent-light:  #EFF6FF;
+  --accent-glow:   rgba(37,99,235,.15);
+
+  --bg:            #F8FAFC;
+  --surface:       #FFFFFF;
+  --surface-2:     #F1F5F9;
+  --border:        #E2E8F0;
+  --border-strong: #CBD5E1;
+
+  --text-primary:  #0F172A;
+  --text-secondary:#475569;
+  --text-muted:    #94A3B8;
+
+  --success:       #10B981;
+  --success-bg:    #ECFDF5;
+  --danger:        #EF4444;
+  --warning:       #F59E0B;
+  --warning-bg:    #FFFBEB;
+  --purple:        #8B5CF6;
+  --purple-bg:     #F5F3FF;
+
+  /* IGST color */
+  --igst:          #7C3AED;
+  --igst-bg:       #F5F3FF;
+  --igst-border:   #DDD6FE;
+
+  /* Cess color */
+  --cess:          #F59E0B;
+  --cess-bg:       #FFFBEB;
+  --cess-border:   #FDE68A;
+
+  --sh-sm:   0 1px 3px rgba(0,0,0,.06), 0 1px 2px rgba(0,0,0,.04);
+  --sh-md:   0 4px 16px rgba(0,0,0,.08);
+  --sh-lg:   0 12px 32px rgba(0,0,0,.10);
+
+  --r-sm: 8px;
+  --r-md: 14px;
+  --r-lg: 20px;
+
+  --font: 'Inter', system-ui, sans-serif;
+  --mono: 'JetBrains Mono', monospace;
+
+  --navbar-bg:     rgba(255,255,255,.9);
+  --navbar-border: rgba(226,232,240,.8);
+  --hero-bg:       linear-gradient(135deg,#EFF6FF 0%,#F0FDF4 100%);
+}
+
+/* ── Dark Mode Tokens — Shivam Soni ─────────────────────── */
+[data-theme="dark"] {
+  --accent:        #3B82F6;
+  --accent-dark:   #2563EB;
+  --accent-light:  #1E3A5F;
+  --accent-glow:   rgba(59,130,246,.2);
+
+  --bg:            #0F172A;
+  --surface:       #1E293B;
+  --surface-2:     #162032;
+  --border:        #334155;
+  --border-strong: #475569;
+
+  --text-primary:  #F1F5F9;
+  --text-secondary:#94A3B8;
+  --text-muted:    #64748B;
+
+  --success-bg:    #052E1A;
+  --warning-bg:    #1C1400;
+  --purple-bg:     #1A1030;
+
+  --igst-bg:       #1A1030;
+  --igst-border:   #4C1D95;
+  --cess-bg:       #1C1400;
+  --cess-border:   #92400E;
+
+  --sh-sm:   0 1px 3px rgba(0,0,0,.3);
+  --sh-md:   0 4px 16px rgba(0,0,0,.4);
+  --sh-lg:   0 12px 32px rgba(0,0,0,.5);
+
+  --navbar-bg:     rgba(15,23,42,.92);
+  --navbar-border: rgba(51,65,85,.8);
+  --hero-bg:       linear-gradient(135deg,#0F172A 0%,#162032 100%);
+}
+
+/* ── Base — Shivam Soni ──────────────────────────────────── */
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  font-family:var(--font);background:var(--bg);color:var(--text-primary);
+  transition:background .3s,color .3s;line-height:1.6;font-size:15px;
+  -webkit-font-smoothing:antialiased;
+}
+
+/* ── Helpers ─────────────────────────────────────────────── */
+.text-accent{color:var(--accent)!important}
+.text-warning{color:var(--warning)!important}
+.bg-surface{background:var(--surface-2)!important;border-color:var(--border)!important;color:var(--text-secondary)!important}
+
+/* ════════════════════════════════════════════════
+   NAVBAR — © Shivam Soni
+════════════════════════════════════════════════ */
+.gst-navbar{
+  position:sticky;top:0;z-index:1000;
+  background:var(--navbar-bg);
+  backdrop-filter:blur(16px) saturate(180%);
+  -webkit-backdrop-filter:blur(16px) saturate(180%);
+  border-bottom:1px solid var(--navbar-border);
+  padding:.75rem 0;transition:background .3s,border-color .3s;
+}
+.brand-icon{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:36px;height:36px;background:var(--accent);color:#fff;
+  border-radius:var(--r-sm);font-size:18px;flex-shrink:0;
+}
+.brand-name{font-size:1.2rem;font-weight:800;color:var(--text-primary);letter-spacing:-.5px}
+.brand-accent{color:var(--accent)}
+.brand-version{
+  font-size:.65rem;font-weight:700;
+  background:var(--accent-light);color:var(--accent);
+  padding:2px 6px;border-radius:4px;letter-spacing:.5px;
+}
+.btn-icon{
+  width:38px;height:38px;display:inline-flex;align-items:center;justify-content:center;
+  border:1.5px solid var(--border);background:var(--surface);
+  color:var(--text-secondary);border-radius:var(--r-sm);cursor:pointer;transition:all .2s;
+}
+.btn-icon:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-light)}
+.btn-outline-accent{
+  border:1.5px solid var(--accent);color:var(--accent);background:transparent;
+  border-radius:var(--r-sm);font-weight:600;font-size:.85rem;transition:all .2s;
+  display:inline-flex;align-items:center;gap:.3rem;
+}
+.btn-outline-accent:hover{background:var(--accent);color:#fff}
+
+/* ════════════════════════════════════════════════
+   HERO — Shivam Soni
+════════════════════════════════════════════════ */
+.hero-section{
+  background:var(--hero-bg);
+  padding:3rem 1rem 2.5rem;
+  border-bottom:1px solid var(--border);
+  transition:background .3s;
+}
+.hero-badge{
+  display:inline-flex;align-items:center;
+  background:var(--surface);border:1.5px solid var(--border);
+  border-radius:100px;padding:.3rem 1rem;
+  font-size:.78rem;font-weight:600;color:var(--success);box-shadow:var(--sh-sm);
+}
+.hero-title{
+  font-size:clamp(1.9rem,5vw,3.2rem);font-weight:800;
+  letter-spacing:-1.5px;color:var(--text-primary);line-height:1.15;margin-bottom:.85rem;
+}
+.hero-highlight{color:var(--accent)}
+.hero-sub{
+  font-size:clamp(.9rem,2vw,1.05rem);color:var(--text-secondary);
+  max-width:600px;margin:0 auto;line-height:1.7;
+}
+.hero-modes{display:flex;flex-wrap:wrap;justify-content:center;gap:.5rem}
+.hero-mode-pill{
+  background:var(--surface);border:1.5px solid var(--border);
+  border-radius:100px;padding:.25rem .85rem;
+  font-size:.75rem;font-weight:600;color:var(--text-secondary);
+  box-shadow:var(--sh-sm);
+}
+
+/* ════════════════════════════════════════════════
+   TOOL SWITCHER — Shivam Soni
+════════════════════════════════════════════════ */
+.tool-switcher-wrap{
+  background:var(--surface);border-bottom:1.5px solid var(--border);
+  position:sticky;top:61px;z-index:900;transition:background .3s;
+}
+.tool-switcher{display:flex;overflow-x:auto;scrollbar-width:none}
+.tool-switcher::-webkit-scrollbar{display:none}
+.tool-tab{
+  flex:1;min-width:110px;padding:.85rem 1rem;border:none;
+  border-bottom:3px solid transparent;background:transparent;
+  color:var(--text-secondary);font-size:.875rem;font-weight:600;
+  cursor:pointer;white-space:nowrap;transition:all .2s;
+  display:flex;align-items:center;justify-content:center;
+}
+.tool-tab:hover:not(.active){color:var(--text-primary);background:var(--surface-2)}
+.tool-tab.active{color:var(--accent);border-bottom-color:var(--accent)}
+
+/* ════════════════════════════════════════════════
+   GST SUB-TABS — Shivam Soni
+════════════════════════════════════════════════ */
+.calc-tabs{
+  display:inline-flex;background:var(--surface-2);
+  border:1.5px solid var(--border);border-radius:var(--r-md);padding:5px;gap:4px;
+}
+.calc-tab{
+  padding:.6rem 1.25rem;border:none;background:transparent;
+  border-radius:10px;font-size:.875rem;font-weight:600;
+  color:var(--text-secondary);cursor:pointer;transition:all .2s;
+  white-space:nowrap;display:inline-flex;align-items:center;
+}
+.calc-tab.active{background:var(--surface);color:var(--accent);box-shadow:var(--sh-sm)}
+.calc-tab:hover:not(.active){color:var(--text-primary)}
+
+/* ════════════════════════════════════════════════
+   CALC CARD — Shivam Soni
+════════════════════════════════════════════════ */
+.calc-card{
+  background:var(--surface);border:1.5px solid var(--border);
+  border-radius:var(--r-lg);padding:1.75rem;
+  box-shadow:var(--sh-md);transition:background .3s,border-color .3s;
+}
+.calc-card-title{font-size:1.1rem;font-weight:700;color:var(--text-primary);margin-bottom:.3rem}
+.calc-card-desc{font-size:.875rem;color:var(--text-secondary);margin-bottom:1.5rem}
+
+.optional-tag{
+  font-size:.7rem;font-weight:600;background:var(--surface-2);
+  color:var(--text-muted);padding:1px 6px;border-radius:4px;
+  margin-left:5px;border:1px solid var(--border);
+}
+
+.calc-input{
+  font-size:1.2rem;font-family:var(--mono);font-weight:600;
+  border-color:var(--border);background:var(--bg);color:var(--text-primary);
+  transition:all .2s;
+}
+.calc-input:focus{
+  border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-glow);
+  background:var(--surface);color:var(--text-primary);
+}
+.rupee-prefix{
+  background:var(--surface-2);color:var(--text-secondary);
+  border-color:var(--border);font-weight:700;font-size:1.1rem;
+}
+
+[data-theme="dark"] .form-control,
+[data-theme="dark"] .input-group-text,
+[data-theme="dark"] .form-select{
+  background-color:var(--surface-2);border-color:var(--border);color:var(--text-primary);
+}
+[data-theme="dark"] .form-control::placeholder{color:var(--text-muted)}
+[data-theme="dark"] .form-control:focus,[data-theme="dark"] .form-select:focus{background-color:var(--surface);color:var(--text-primary)}
+[data-theme="dark"] .form-select option{background:var(--surface)}
+[data-theme="dark"] .form-check-input{background-color:var(--surface-2);border-color:var(--border)}
+[data-theme="dark"] .form-check-input:checked{background-color:var(--accent);border-color:var(--accent)}
+
+/* ── Rate Buttons — Shivam Soni ──────────────────────────── */
+.rate-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}
+.rate-btn{
+  border:1.5px solid var(--border);background:var(--surface-2);
+  color:var(--text-primary);border-radius:var(--r-sm);
+  padding:.48rem .25rem;font-size:.88rem;font-weight:600;
+  cursor:pointer;transition:all .18s;font-family:var(--mono);
+  display:flex;align-items:center;justify-content:center;gap:3px;
+  position:relative;
+}
+.rate-btn:hover{border-color:var(--accent);background:var(--accent-light);color:var(--accent)}
+.rate-btn.active{border-color:var(--accent);background:var(--accent);color:#fff;box-shadow:0 2px 8px rgba(37,99,235,.3)}
+.rate-btn-special{border-color:var(--warning);color:var(--warning)}
+.rate-btn-special:hover{background:var(--warning-bg);border-color:var(--warning)}
+.rate-btn-special.active{background:var(--warning);color:#fff;border-color:var(--warning)}
+.rate-btn-gold{border-color:#B45309;color:#B45309}
+.rate-btn-gold:hover{background:#FEF3C7;border-color:#B45309}
+.rate-btn-gold.active{background:#B45309;color:#fff}
+.rate-btn-custom{font-family:var(--font);font-size:.78rem}
+.rate-new{
+  font-size:.6rem;font-family:var(--font);font-weight:800;
+  background:#EF4444;color:#fff;border-radius:3px;padding:1px 3px;letter-spacing:.3px;
+}
+.custom-rate-input{margin-top:.5rem}
+.rate-display{
+  margin-top:.5rem;font-size:.82rem;color:var(--text-secondary);
+  padding:.4rem .75rem;background:var(--success-bg);
+  border-radius:var(--r-sm);border:1px solid rgba(16,185,129,.2);
+}
+
+/* ── Transaction Type Buttons — KEY FEATURE — Shivam Soni ── */
+.txn-type-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.txn-btn{
+  border:1.5px solid var(--border);background:var(--surface-2);
+  border-radius:var(--r-md);padding:.7rem .5rem;
+  cursor:pointer;transition:all .2s;
+  display:flex;flex-direction:column;align-items:center;gap:4px;
+  font-family:var(--font);
+}
+.txn-btn i{font-size:1.25rem;color:var(--text-muted);transition:color .2s}
+.txn-btn-title{font-size:.75rem;font-weight:700;color:var(--text-primary);text-align:center;line-height:1.2}
+.txn-btn-sub{font-size:.65rem;font-weight:600;color:var(--text-muted);text-align:center;font-family:var(--mono)}
+.txn-btn:hover{border-color:var(--accent);background:var(--accent-light)}
+.txn-btn:hover i{color:var(--accent)}
+.txn-btn.active{border-color:var(--accent);background:var(--accent)}
+.txn-btn.active i{color:#fff}
+.txn-btn.active .txn-btn-title{color:#fff}
+.txn-btn.active .txn-btn-sub{color:rgba(255,255,255,.8)}
+
+/* info button */
+.info-btn{
+  border:none;background:transparent;color:var(--text-muted);
+  cursor:pointer;padding:0 4px;font-size:.9rem;transition:color .2s;
+}
+.info-btn:hover{color:var(--accent)}
+
+/* ── Compensation Cess — Shivam Soni ─────────────────────── */
+.cess-toggle-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:.5rem}
+.cess-box{
+  background:var(--cess-bg);border:1.5px solid var(--cess-border);
+  border-radius:var(--r-md);padding:1rem;
+}
+.cess-info-text{font-size:.78rem;color:var(--text-secondary)}
+.cess-quick-row{display:flex;flex-wrap:wrap;gap:6px}
+.cess-quick-btn{
+  border:1.5px solid var(--cess-border);background:var(--surface);
+  color:var(--warning);border-radius:6px;padding:.3rem .65rem;
+  font-size:.72rem;font-weight:700;cursor:pointer;transition:all .15s;font-family:var(--font);
+}
+.cess-quick-btn:hover{background:var(--warning);color:#fff;border-color:var(--warning)}
+
+/* ── CTA Buttons — Shivam Soni ───────────────────────────── */
+.btn-primary-accent{
+  background:var(--accent);border:none;color:#fff;font-weight:700;
+  border-radius:var(--r-sm);padding:.7rem 1.5rem;font-size:.9rem;
+  transition:all .2s;box-shadow:0 2px 8px rgba(37,99,235,.25);
+}
+.btn-primary-accent:hover{background:var(--accent-dark);color:#fff;transform:translateY(-1px);box-shadow:0 4px 14px rgba(37,99,235,.35)}
+.btn-primary-accent:active{transform:translateY(0)}
+
+.btn-outline-secondary{
+  border:1.5px solid var(--border-strong);color:var(--text-secondary);
+  background:transparent;border-radius:var(--r-sm);font-weight:600;
+}
+.btn-outline-secondary:hover{background:var(--surface-2);color:var(--text-primary);border-color:var(--border-strong)}
+[data-theme="dark"] .btn-outline-secondary{color:var(--text-secondary);border-color:var(--border)}
+[data-theme="dark"] .btn-outline-secondary:hover{background:var(--surface-2);color:var(--text-primary)}
+
+.btn-outline-danger{
+  border:1.5px solid var(--danger);color:var(--danger);
+  background:transparent;border-radius:var(--r-sm);font-weight:600;font-size:.82rem;
+}
+.btn-outline-danger:hover{background:var(--danger);color:#fff}
+
+/* ════════════════════════════════════════════════
+   RESULTS — Shivam Soni
+════════════════════════════════════════════════ */
+.results-placeholder{
+  min-height:300px;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;text-align:center;
+  background:var(--surface);border:2px dashed var(--border);
+  border-radius:var(--r-lg);padding:3rem 2rem;color:var(--text-muted);
+}
+.result-card{border-color:var(--accent);border-width:2px;position:relative;overflow:hidden}
+.result-card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:4px;
+  background:linear-gradient(90deg,var(--accent),#818CF8,#10B981);
+}
+
+.result-type-badge{
+  background:var(--accent-light);color:var(--accent);
+  font-size:.7rem;font-weight:700;padding:.2rem .65rem;
+  border-radius:100px;letter-spacing:.5px;text-transform:uppercase;
+  border:1px solid rgba(37,99,235,.2);white-space:nowrap;
+}
+.txn-type-badge{
+  font-size:.65rem;font-weight:700;padding:.2rem .65rem;
+  border-radius:100px;letter-spacing:.4px;text-transform:uppercase;
+  white-space:nowrap;
+  background:var(--surface-2);color:var(--text-secondary);
+  border:1px solid var(--border);
+}
+/* Badge states per transaction type */
+.txn-type-badge.intra{background:var(--success-bg);color:var(--success);border-color:rgba(16,185,129,.2)}
+.txn-type-badge.inter{background:var(--igst-bg);color:var(--igst);border-color:var(--igst-border)}
+.txn-type-badge.ut{background:var(--purple-bg);color:var(--purple);border-color:#DDD6FE}
+[data-theme="dark"] .txn-type-badge.ut{border-color:#4C1D95}
+
+.res-product-name{
+  font-size:.8rem;font-weight:600;color:var(--text-secondary);
+  background:var(--surface-2);border:1px solid var(--border);
+  border-radius:6px;padding:3px 10px;margin-top:4px;
+  display:inline-flex;align-items:center;gap:5px;
+}
+.res-product-name::before{content:'🏷 '}
+
+/* Result rows */
+.result-rows{display:flex;flex-direction:column;gap:2px}
+.result-row{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:.75rem 1rem;background:var(--surface-2);border-radius:var(--r-sm);
+  transition:background .15s;
+}
+.result-row:hover{background:var(--accent-light)}
+.result-row-gst{border-left:3px solid var(--accent)}
+.result-row-cess{border-left:3px solid var(--warning);background:var(--cess-bg)}
+.result-row-cess:hover{background:var(--warning-bg)}
+.result-row-total{background:var(--text-primary)!important}
+.result-row-total .result-label{color:#fff}
+.result-row-total .result-value{color:#fff;font-size:1.2rem}
+[data-theme="dark"] .result-row-total{background:var(--accent)!important}
+.result-label{font-size:.875rem;font-weight:500;color:var(--text-secondary)}
+.result-value{font-family:var(--mono);font-size:1rem;font-weight:700;color:var(--text-primary)}
+.result-rate-tag{
+  font-size:.68rem;background:var(--accent-light);color:var(--accent);
+  padding:1px 6px;border-radius:4px;font-family:var(--mono);font-weight:600;margin-left:4px;
+}
+.result-cess-tag{background:var(--cess-bg);color:var(--cess);border:1px solid var(--cess-border)}
+
+/* ── Tax Component Breakdown — KEY UI — Shivam Soni ─────── */
+.breakdown-section{border-top:1.5px solid var(--border);padding-top:1.25rem}
+.breakdown-title{font-size:.8rem;font-weight:700;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.6px;margin-bottom:.75rem}
+
+/* CGST card */
+.breakdown-card{border-radius:var(--r-md);padding:1rem;text-align:center;border:1.5px solid transparent;transition:all .2s}
+.breakdown-card:hover{transform:translateY(-2px);box-shadow:var(--sh-md)}
+.breakdown-cgst{background:linear-gradient(135deg,#EFF6FF,#DBEAFE);border-color:#BFDBFE}
+.breakdown-sgst{background:linear-gradient(135deg,#F0FDF4,#DCFCE7);border-color:#BBF7D0}
+[data-theme="dark"] .breakdown-cgst{background:linear-gradient(135deg,#1E3A5F,#1E3358);border-color:#1D4ED8}
+[data-theme="dark"] .breakdown-sgst{background:linear-gradient(135deg,#052E1A,#064E3B);border-color:#059669}
+.breakdown-card-label{font-size:.68rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text-secondary);margin-bottom:.3rem}
+.breakdown-card-value{font-family:var(--mono);font-size:1.2rem;font-weight:800;color:var(--text-primary);margin-bottom:.2rem}
+.breakdown-card-sub{font-size:.68rem;color:var(--text-muted);font-family:var(--mono)}
+
+/* IGST card */
+.igst-card{
+  background:linear-gradient(135deg,var(--igst-bg),#EDE9FE);
+  border:2px solid var(--igst-border);
+  border-radius:var(--r-md);padding:1rem 1.25rem;
+  display:flex;align-items:center;justify-content:space-between;
+  transition:all .2s;
+}
+.igst-card:hover{transform:translateY(-2px);box-shadow:var(--sh-md)}
+.igst-label{font-size:.72rem;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:var(--igst)}
+.igst-sub{font-size:.72rem;color:var(--text-muted);margin-top:2px}
+.igst-value{font-family:var(--mono);font-size:1.6rem;font-weight:800;color:var(--igst)}
+.igst-zero-row{
+  display:flex;gap:1rem;flex-wrap:wrap;margin-top:.6rem;
+  font-size:.75rem;color:var(--text-muted);
+  padding:.5rem .75rem;background:var(--surface-2);
+  border-radius:var(--r-sm);border:1px solid var(--border);
+}
+.igst-zero-reason{font-size:.68rem;color:var(--text-muted);font-style:italic}
+
+/* Share buttons */
+.btn-copy{background:var(--surface-2);border:1.5px solid var(--border);color:var(--text-primary);border-radius:var(--r-sm);font-weight:600;font-size:.83rem;padding:.5rem .9rem;transition:all .2s}
+.btn-copy:hover{background:var(--accent);border-color:var(--accent);color:#fff}
+.btn-share{background:#25D366;border:none;color:#fff;border-radius:var(--r-sm);font-weight:600;font-size:.83rem;padding:.5rem .9rem;transition:background .2s}
+.btn-share:hover{background:#1DAA52;color:#fff}
+.btn-share-email{background:var(--surface-2);border:1.5px solid var(--border);color:var(--text-secondary);border-radius:var(--r-sm);font-weight:600;font-size:.83rem;padding:.5rem .9rem;transition:all .2s}
+.btn-share-email:hover{background:var(--accent-light);border-color:var(--accent);color:var(--accent)}
+
+/* ════════════════════════════════════════════════
+   TRANSACTION INFO MODAL — Shivam Soni
+════════════════════════════════════════════════ */
+.txn-info-modal{
+  position:fixed;inset:0;z-index:2000;
+  background:rgba(0,0,0,.5);backdrop-filter:blur(4px);
+  display:flex;align-items:center;justify-content:center;padding:1rem;
+}
+.txn-info-content{
+  background:var(--surface);border:1.5px solid var(--border);
+  border-radius:var(--r-lg);padding:2rem;max-width:680px;width:100%;
+  box-shadow:var(--sh-lg);max-height:90vh;overflow-y:auto;
+}
+.txn-info-title{font-size:1.1rem;font-weight:800;color:var(--text-primary)}
+.btn-close-modal{
+  border:none;background:var(--surface-2);border-radius:var(--r-sm);
+  color:var(--text-secondary);cursor:pointer;padding:.4rem .6rem;
+  font-size:1rem;transition:all .2s;
+}
+.btn-close-modal:hover{background:var(--danger);color:#fff}
+.txn-info-grid{display:flex;flex-direction:column;gap:.75rem}
+.txn-info-card{
+  display:flex;gap:1rem;background:var(--surface-2);
+  border:1.5px solid var(--border);border-radius:var(--r-md);padding:1rem;
+}
+.txn-info-icon{
+  font-size:1.5rem;color:var(--accent);flex-shrink:0;
+  width:42px;height:42px;background:var(--accent-light);
+  border-radius:var(--r-sm);display:flex;align-items:center;justify-content:center;
+}
+.txn-info-body strong{font-size:.9rem;color:var(--text-primary)}
+.txn-info-body p{font-size:.82rem;color:var(--text-secondary);margin:.3rem 0 .4rem}
+.txn-info-example{
+  font-family:var(--mono);font-size:.75rem;
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:6px;padding:.35rem .65rem;color:var(--accent);
+}
+.txn-info-note{
+  font-size:.78rem;color:var(--text-muted);
+  background:var(--warning-bg);border:1px solid var(--cess-border);
+  border-radius:var(--r-sm);padding:.6rem .85rem;margin-top:.75rem;margin-bottom:0;
+}
+
+/* ════════════════════════════════════════════════
+   SECTION LAYOUT — Shivam Soni
+════════════════════════════════════════════════ */
+.section-header{display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:1rem;margin-bottom:1.5rem}
+.section-title{font-size:1.2rem;font-weight:800;color:var(--text-primary);margin-bottom:.25rem;letter-spacing:-.3px}
+.section-sub{font-size:.85rem;color:var(--text-secondary);margin:0}
+
+/* ════════════════════════════════════════════════
+   HISTORY — Shivam Soni
+════════════════════════════════════════════════ */
+.history-table-wrap{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--r-lg);overflow:hidden;box-shadow:var(--sh-sm)}
+.history-table{margin:0;font-size:.78rem}
+.history-table thead th{background:var(--surface-2);color:var(--text-secondary);font-weight:700;font-size:.68rem;text-transform:uppercase;letter-spacing:.5px;border-bottom:1.5px solid var(--border);padding:.75rem .85rem;white-space:nowrap}
+.history-table tbody tr{border-color:var(--border);transition:background .15s}
+.history-table tbody tr:hover{background:var(--accent-light)}
+.history-table td{padding:.65rem .85rem;color:var(--text-primary);border-color:var(--border);vertical-align:middle}
+[data-theme="dark"] .history-table tbody tr:hover{background:rgba(59,130,246,.08)}
+
+.badge-add{background:var(--accent-light);color:var(--accent);font-size:.68rem;font-weight:700;border-radius:6px;padding:2px 7px;white-space:nowrap}
+.badge-remove{background:var(--success-bg);color:var(--success);font-size:.68rem;font-weight:700;border-radius:6px;padding:2px 7px;white-space:nowrap}
+.badge-intra{background:var(--success-bg);color:var(--success);font-size:.63rem;font-weight:700;border-radius:4px;padding:1px 5px}
+.badge-inter{background:var(--igst-bg);color:var(--igst);font-size:.63rem;font-weight:700;border-radius:4px;padding:1px 5px}
+.badge-ut{background:var(--purple-bg);color:var(--purple);font-size:.63rem;font-weight:700;border-radius:4px;padding:1px 5px}
+
+.history-card{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--r-md);padding:1rem;margin-bottom:.75rem;box-shadow:var(--sh-sm)}
+.history-card-row{display:flex;justify-content:space-between;font-size:.82rem;margin-bottom:.3rem}
+.history-card-row:last-child{margin-bottom:0}
+.history-card-label{color:var(--text-secondary)}
+.history-card-value{font-weight:600;color:var(--text-primary);font-family:var(--mono)}
+.history-empty{text-align:center;padding:3rem 1rem;color:var(--text-muted);display:none}
+
+/* ════════════════════════════════════════════════
+   GST INFO CARDS — Shivam Soni
+════════════════════════════════════════════════ */
+.gst-info-card{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--r-md);padding:1.1rem 1.25rem;box-shadow:var(--sh-sm);transition:all .2s;height:100%}
+.gst-info-card:hover{transform:translateY(-2px);box-shadow:var(--sh-md);border-color:var(--accent)}
+.gst-info-rate{font-size:1.6rem;font-weight:800;font-family:var(--mono);color:var(--accent);line-height:1;margin-bottom:.3rem}
+.gst-info-label{font-size:.7rem;font-weight:700;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.5px;margin-bottom:.35rem}
+.gst-info-desc{font-size:.75rem;color:var(--text-muted);line-height:1.5}
+.gst-info-type{
+  display:inline-block;font-size:.6rem;font-weight:700;border-radius:4px;
+  padding:1px 6px;margin-bottom:.4rem;letter-spacing:.4px;text-transform:uppercase;
+}
+.gst-info-type.intra{background:var(--success-bg);color:var(--success)}
+.gst-info-type.inter{background:var(--igst-bg);color:var(--igst)}
+.gst-info-type.both{background:var(--accent-light);color:var(--accent)}
+.gst-info-type.special{background:var(--warning-bg);color:var(--warning)}
+
+/* ════════════════════════════════════════════════
+   SCIENTIFIC CALCULATOR — Shivam Soni
+════════════════════════════════════════════════ */
+.sci-card{max-width:480px;margin:0 auto}
+.sci-display{
+  background:var(--surface-2);border:1.5px solid var(--border);
+  border-radius:var(--r-md);padding:1rem 1.25rem;margin-bottom:1rem;
+  min-height:90px;display:flex;flex-direction:column;justify-content:flex-end;overflow:hidden;
+}
+.sci-expression{font-family:var(--mono);font-size:.82rem;color:var(--text-muted);text-align:right;min-height:1.2em;word-break:break-all}
+.sci-result{font-family:var(--mono);font-size:2rem;font-weight:700;color:var(--text-primary);text-align:right;word-break:break-all;line-height:1.2}
+.sci-mode-label{font-size:.75rem;font-weight:600;color:var(--text-muted)}
+.sci-mode-toggle{display:inline-flex;background:var(--surface-2);border:1.5px solid var(--border);border-radius:6px;overflow:hidden}
+.sci-mode-btn{border:none;background:transparent;font-size:.72rem;font-weight:700;padding:.25rem .65rem;color:var(--text-muted);cursor:pointer;transition:all .15s}
+.sci-mode-btn.active{background:var(--accent);color:#fff}
+.sci-mode-indicator{font-size:.72rem;font-weight:700;color:var(--accent);opacity:0;transition:opacity .2s}
+
+.sci-keypad{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+.sci-btn{
+  border:1.5px solid var(--border);background:var(--surface-2);
+  color:var(--text-primary);border-radius:var(--r-sm);
+  padding:.6rem .25rem;font-size:.82rem;font-weight:600;
+  cursor:pointer;transition:all .15s;font-family:var(--font);
+  display:flex;align-items:center;justify-content:center;min-height:42px;
+}
+.sci-btn:hover{border-color:var(--accent);background:var(--accent-light);color:var(--accent)}
+.sci-btn:active{transform:scale(.95)}
+.sci-fn{color:var(--accent);font-size:.78rem}
+.sci-num{font-family:var(--mono);font-size:.95rem;font-weight:700;background:var(--surface)}
+.sci-op{color:var(--warning);font-size:1rem;font-weight:700;background:var(--surface)}
+.sci-mem{color:var(--success);font-size:.75rem;font-weight:700}
+.sci-back{color:var(--danger)}
+.sci-clear{background:#FEF2F2;border-color:#FECACA;color:var(--danger);font-weight:700}
+.sci-clear-all{background:#FEF2F2;border-color:#FECACA;color:var(--danger);font-weight:800}
+.sci-zero{grid-column:span 1}
+.sci-equals{background:var(--accent);border-color:var(--accent);color:#fff;font-size:1.1rem;font-weight:800;box-shadow:0 2px 8px rgba(37,99,235,.25)}
+.sci-equals:hover{background:var(--accent-dark);color:#fff}
+[data-theme="dark"] .sci-clear,[data-theme="dark"] .sci-clear-all{background:#2D1010;border-color:#7F1D1D}
+[data-theme="dark"] .sci-num{background:var(--surface-2)}
+[data-theme="dark"] .sci-op{background:var(--surface-2)}
+
+/* ════════════════════════════════════════════════
+   UNIT CONVERTER — Shivam Soni
+════════════════════════════════════════════════ */
+.unit-category-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.unit-cat-btn{border:1.5px solid var(--border);background:var(--surface-2);color:var(--text-secondary);border-radius:var(--r-sm);padding:.6rem .5rem;font-size:.75rem;font-weight:600;cursor:pointer;transition:all .18s;display:flex;flex-direction:column;align-items:center;gap:4px}
+.unit-cat-btn i{font-size:1.1rem}
+.unit-cat-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-light)}
+.unit-cat-btn.active{border-color:var(--accent);background:var(--accent);color:#fff}
+.unit-converter-row{display:flex;align-items:flex-end;gap:1rem}
+.unit-field{flex:1;min-width:0}
+.unit-select{border-color:var(--border);background:var(--surface);color:var(--text-primary);border-radius:var(--r-sm);font-weight:600;font-size:.875rem}
+.unit-select:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-glow)}
+.unit-swap-btn{width:42px;height:42px;flex-shrink:0;border:1.5px solid var(--border);background:var(--surface-2);color:var(--text-secondary);border-radius:var(--r-sm);cursor:pointer;transition:all .2s;font-size:1rem;display:flex;align-items:center;justify-content:center;align-self:center;margin-top:1.5rem}
+.unit-swap-btn:hover{background:var(--accent);border-color:var(--accent);color:#fff;transform:rotate(180deg)}
+.unit-formula{background:var(--surface-2);border:1.5px solid var(--border);border-radius:var(--r-sm);padding:.75rem 1rem;font-size:.82rem;color:var(--text-secondary);font-family:var(--mono);text-align:center;transition:all .2s}
+.unit-quick-ref{border-top:1.5px solid var(--border);padding-top:1rem}
+.unit-quick-title{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--text-muted);margin-bottom:.75rem}
+.unit-quick-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:6px}
+.unit-quick-item{background:var(--surface-2);border:1px solid var(--border);border-radius:var(--r-sm);padding:.5rem .75rem;font-size:.75rem;color:var(--text-secondary);cursor:pointer;transition:all .15s}
+.unit-quick-item:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-light)}
+.unit-quick-item strong{display:block;color:var(--text-primary);font-family:var(--mono);font-size:.82rem;margin-bottom:1px}
+
+/* ════════════════════════════════════════════════
+   FOOTER — © 2024 Shivam Soni
+════════════════════════════════════════════════ */
+.gst-footer{background:var(--surface);border-top:1.5px solid var(--border);padding:2.5rem 1rem;transition:background .3s,border-color .3s}
+.footer-brand{font-size:1.1rem;font-weight:800;color:var(--text-primary)}
+.footer-text{font-size:.8rem;color:var(--text-muted);max-width:480px;margin:0 auto .4rem}
+.footer-author{font-size:.82rem;color:var(--text-secondary);margin-bottom:.25rem}
+.footer-author strong{color:var(--accent)}
+.footer-copy{font-size:.75rem;color:var(--text-muted);margin:0}
+
+/* Toast */
+.toast{background:var(--surface)!important;border:1.5px solid var(--border)!important;border-radius:var(--r-md)!important;box-shadow:var(--sh-lg);color:var(--text-primary)!important;font-size:.875rem;font-weight:600}
+.toast .btn-close{filter:none}
+[data-theme="dark"] .toast .btn-close{filter:invert(1)}
+
+/* ════════════════════════════════════════════════
+   ANIMATIONS — Shivam Soni
+════════════════════════════════════════════════ */
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.result-card,.history-card,.gst-info-card,.sci-card,.txn-info-content{animation:fadeUp .3s ease both}
+
+/* ════════════════════════════════════════════════
+   RESPONSIVE — Shivam Soni
+════════════════════════════════════════════════ */
+@media(max-width:768px){
+  .hero-section{padding:2.5rem 1rem 2rem}
+  .calc-card{padding:1.25rem 1rem}
+  .tool-tab{font-size:.78rem;padding:.75rem .6rem;min-width:100px}
+  .rate-grid{grid-template-columns:repeat(3,1fr);gap:5px}
+  .txn-type-grid{grid-template-columns:repeat(3,1fr);gap:5px}
+  .txn-btn{padding:.55rem .35rem}
+  .txn-btn-title{font-size:.68rem}
+  .result-row-total .result-value{font-size:1rem}
+  .igst-value{font-size:1.25rem}
+  .unit-converter-row{flex-direction:column;gap:.75rem}
+  .unit-swap-btn{width:100%;height:38px;transform:rotate(90deg);margin-top:0}
+  .unit-swap-btn:hover{transform:rotate(270deg)}
+  .sci-keypad{gap:4px}
+  .sci-btn{padding:.5rem .2rem;font-size:.75rem;min-height:38px}
+  .sci-result{font-size:1.6rem}
+  .txn-info-content{padding:1.25rem}
+  .txn-info-card{flex-direction:column;gap:.5rem}
+}
+@media(max-width:480px){
+  .tool-tab{min-width:88px;font-size:.73rem;padding:.7rem .4rem}
+  .tool-tab i{display:none}
+  .rate-grid{grid-template-columns:repeat(2,1fr)}
+  .unit-category-grid{grid-template-columns:repeat(4,1fr);gap:5px}
+  .unit-cat-btn{font-size:.65rem;padding:.5rem .25rem}
+  .sci-keypad{gap:3px}
+  .sci-btn{min-height:34px;font-size:.7rem;border-radius:6px}
+  .breakdown-card-value{font-size:1rem}
+  .cess-quick-row .cess-quick-btn{font-size:.65rem;padding:.25rem .5rem}
+  .hero-modes{display:none}
+}
+
+/* Focus */
+:focus-visible{outline:2.5px solid var(--accent);outline-offset:2px;border-radius:4px}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+
+/* ================================================================
+   End of style.css
+   Author  : Shivam Soni
+   © 2024 Shivam Soni. All rights reserved.
+   ================================================================ */

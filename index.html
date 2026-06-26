@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+<!--
+  ================================================================
+   GST Calculator Pro — index.html  v3.0
+   Complete Indian GST tool: IGST / CGST+SGST / CGST+UTGST,
+   Compensation Cess, Scientific Calculator, Unit Converter
+  ----------------------------------------------------------------
+   Author    : Shivam Soni
+   Created   : 2024
+   Copyright : © 2024 Shivam Soni. All rights reserved.
+   License   : MIT — keep this header intact if reusing.
+  ----------------------------------------------------------------
+   CA-Verified Tax Logic:
+   • Intra-state  → CGST + SGST (each = rate/2)
+   • Inter-state  → IGST only (CGST = SGST = ₹0)
+   • Union Territory (no legislature) → CGST + UTGST
+   • Cess applies on 28%/40% slab luxury/sin goods
+  ================================================================
+-->
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GST Calculator Pro — IGST · CGST · SGST · UTGST + Cess | Shivam Soni</title>
+  <meta name="description" content="India's most complete GST calculator. Switch between IGST (inter-state) and CGST+SGST (intra-state) modes, add Compensation Cess, export CSV. Built by Shivam Soni." />
+  <meta name="keywords" content="GST calculator India, IGST calculator, CGST SGST, UTGST, compensation cess, inter-state GST, intra-state GST, Shivam Soni" />
+  <meta name="author" content="Shivam Soni" />
+  <meta property="og:title" content="GST Calculator Pro — IGST · CGST · SGST · UTGST" />
+  <meta property="og:description" content="Complete Indian GST calculator with transaction type switching, cess, scientific calc and unit converter. By Shivam Soni." />
+  <meta property="og:type" content="website" />
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<!-- Author: Shivam Soni | © 2024 All rights reserved -->
+
+<!-- ═══════════════ NAVBAR — Shivam Soni ═══════════════ -->
+<nav class="navbar gst-navbar" aria-label="Main navigation">
+  <div class="container-xl d-flex align-items-center justify-content-between">
+    <a class="navbar-brand d-flex align-items-center gap-2" href="#">
+      <span class="brand-icon"><i class="bi bi-receipt-cutoff"></i></span>
+      <span class="brand-name">GST<span class="brand-accent">Pro</span></span>
+      <span class="brand-version">v3</span>
+    </a>
+    <div class="d-flex align-items-center gap-2">
+      <button class="btn btn-icon" id="themeToggle" aria-label="Toggle dark/light mode">
+        <i class="bi bi-moon-stars-fill" id="themeIcon"></i>
+      </button>
+      <a href="#historySection" class="btn btn-outline-accent btn-sm d-none d-sm-inline-flex align-items-center gap-1">
+        <i class="bi bi-clock-history"></i><span>History</span>
+      </a>
+    </div>
+  </div>
+</nav>
+
+<!-- ═══════════════ HERO — Shivam Soni ═══════════════ -->
+<header class="hero-section">
+  <div class="container-xl text-center">
+    <div class="hero-badge mb-3">
+      <i class="bi bi-patch-check-fill me-1"></i>CA-Verified · Free · Offline · No Signup
+    </div>
+    <h1 class="hero-title">GST Calculator <span class="hero-highlight">Pro</span></h1>
+    <p class="hero-sub">
+      IGST · CGST+SGST · CGST+UTGST · Compensation Cess<br class="d-none d-md-inline"/>
+      + Scientific Calculator · Unit Converter
+    </p>
+    <!-- Transaction type quick indicators -->
+    <div class="hero-modes mt-3">
+      <span class="hero-mode-pill"><i class="bi bi-arrow-left-right me-1"></i>Inter-state → IGST</span>
+      <span class="hero-mode-pill"><i class="bi bi-house me-1"></i>Intra-state → CGST+SGST</span>
+      <span class="hero-mode-pill"><i class="bi bi-geo-alt me-1"></i>UT → CGST+UTGST</span>
+    </div>
+  </div>
+</header>
+
+<!-- ═══════════════ TOOL SWITCHER — Shivam Soni ═══════════════ -->
+<div class="tool-switcher-wrap">
+  <div class="container-xl">
+    <div class="tool-switcher" role="tablist" aria-label="Select tool">
+      <button class="tool-tab active" id="toolTab-gst" role="tab" aria-selected="true"
+        aria-controls="toolPanel-gst" onclick="switchTool('gst')">
+        <i class="bi bi-receipt me-1 me-md-2"></i><span>GST Calculator</span>
+      </button>
+      <button class="tool-tab" id="toolTab-sci" role="tab" aria-selected="false"
+        aria-controls="toolPanel-sci" onclick="switchTool('sci')">
+        <i class="bi bi-calculator-fill me-1 me-md-2"></i><span>Scientific</span>
+      </button>
+      <button class="tool-tab" id="toolTab-unit" role="tab" aria-selected="false"
+        aria-controls="toolPanel-unit" onclick="switchTool('unit')">
+        <i class="bi bi-arrow-left-right me-1 me-md-2"></i><span>Unit Converter</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ MAIN — Shivam Soni ═══════════════ -->
+<main class="container-xl py-4 py-md-5">
+
+  <!-- ────────────────────────────────────────────────────
+       TOOL PANEL: GST CALCULATOR — CA-Verified by Shivam Soni
+  ─────────────────────────────────────────────────────── -->
+  <div id="toolPanel-gst" class="tool-panel">
+
+    <!-- GST Mode: Add / Remove -->
+    <div class="d-flex justify-content-center mb-4">
+      <div class="calc-tabs" role="tablist" aria-label="GST calculator mode">
+        <button class="calc-tab active" id="tab-add" role="tab" aria-selected="true"
+          aria-controls="panel-add" onclick="switchGSTTab('add')">
+          <i class="bi bi-plus-circle-fill me-2"></i>Add GST
+        </button>
+        <button class="calc-tab" id="tab-remove" role="tab" aria-selected="false"
+          aria-controls="panel-remove" onclick="switchGSTTab('remove')">
+          <i class="bi bi-dash-circle-fill me-2"></i>Remove GST
+        </button>
+      </div>
+    </div>
+
+    <div class="row g-4 align-items-start">
+
+      <!-- LEFT: Input Form -->
+      <div class="col-lg-6">
+
+        <!-- ── ADD GST PANEL ── -->
+        <div id="panel-add" role="tabpanel" aria-labelledby="tab-add">
+          <div class="calc-card">
+            <h2 class="calc-card-title">
+              <i class="bi bi-plus-circle me-2 text-accent"></i>Add GST to Amount
+            </h2>
+            <p class="calc-card-desc">Enter the base price — get the GST-inclusive total with full tax breakdown.</p>
+
+            <!-- Product / Service Name (optional) -->
+            <div class="mb-3">
+              <label for="addProductName" class="form-label fw-semibold">
+                Product / Service Name <span class="optional-tag">Optional</span>
+              </label>
+              <div class="input-group">
+                <span class="input-group-text bg-surface"><i class="bi bi-tag"></i></span>
+                <input type="text" class="form-control" id="addProductName"
+                  placeholder="e.g. Laptop, Consulting fee, Mobile phone…"
+                  maxlength="80" oninput="calculateAdd()"
+                  aria-label="Product or service name (optional)" />
+              </div>
+            </div>
+
+            <!-- Amount -->
+            <div class="mb-3">
+              <label for="addAmount" class="form-label fw-semibold">Base Amount (₹)</label>
+              <div class="input-group input-group-lg">
+                <span class="input-group-text rupee-prefix">₹</span>
+                <input type="number" class="form-control calc-input" id="addAmount"
+                  placeholder="0.00" min="0" step="0.01"
+                  aria-label="Base amount in rupees" oninput="calculateAdd()" />
+              </div>
+            </div>
+
+            <!-- GST Rate Quick Buttons -->
+            <div class="mb-3">
+              <label class="form-label fw-semibold">GST Rate</label>
+              <div class="rate-grid mb-2" role="group" aria-label="Select GST rate">
+                <button class="rate-btn" onclick="selectRate('add',0)"    data-rate="0"    aria-pressed="false">0%</button>
+                <button class="rate-btn" onclick="selectRate('add',3)"    data-rate="3"    aria-pressed="false">3%</button>
+                <button class="rate-btn" onclick="selectRate('add',5)"    data-rate="5"    aria-pressed="false">5%</button>
+                <button class="rate-btn" onclick="selectRate('add',12)"   data-rate="12"   aria-pressed="false">12%</button>
+                <button class="rate-btn" onclick="selectRate('add',18)"   data-rate="18"   aria-pressed="false">18%</button>
+                <button class="rate-btn" onclick="selectRate('add',28)"   data-rate="28"   aria-pressed="false">28%</button>
+                <button class="rate-btn rate-btn-special" onclick="selectRate('add',40)"   data-rate="40"   aria-pressed="false" title="Sin/Luxury goods from Feb 2026">40% <span class="rate-new">NEW</span></button>
+                <button class="rate-btn rate-btn-gold" onclick="selectRate('add',1.5)"  data-rate="1.5"  aria-pressed="false" title="Diamonds">1.5%</button>
+                <button class="rate-btn rate-btn-custom" onclick="toggleCustomRate('add')" data-rate="custom" aria-pressed="false">Custom</button>
+              </div>
+              <div id="addCustomRate" class="custom-rate-input d-none">
+                <div class="input-group">
+                  <input type="number" class="form-control" id="addCustomRateValue"
+                    placeholder="e.g. 6" min="0" max="100" step="0.01"
+                    aria-label="Custom GST rate percentage" oninput="calculateAdd()" />
+                  <span class="input-group-text">%</span>
+                </div>
+              </div>
+              <div id="addRateDisplay" class="rate-display d-none">
+                <i class="bi bi-check-circle-fill text-success me-1"></i>
+                Rate: <strong id="addRateValue">–</strong>
+              </div>
+            </div>
+
+            <!-- Transaction Type — THE KEY NEW FEATURE -->
+            <div class="mb-3">
+              <label class="form-label fw-semibold">
+                Transaction Type
+                <button class="info-btn" onclick="showTxnInfo()" aria-label="Learn about transaction types">
+                  <i class="bi bi-question-circle"></i>
+                </button>
+              </label>
+              <div class="txn-type-grid" role="group" aria-label="Select transaction type">
+                <button class="txn-btn active" id="addTxn-intra" data-txn="intra"
+                  onclick="selectTxnType('add','intra')" aria-pressed="true">
+                  <i class="bi bi-house-fill"></i>
+                  <span class="txn-btn-title">Intra-state</span>
+                  <span class="txn-btn-sub">CGST + SGST</span>
+                </button>
+                <button class="txn-btn" id="addTxn-inter" data-txn="inter"
+                  onclick="selectTxnType('add','inter')" aria-pressed="false">
+                  <i class="bi bi-arrow-left-right"></i>
+                  <span class="txn-btn-title">Inter-state</span>
+                  <span class="txn-btn-sub">IGST only</span>
+                </button>
+                <button class="txn-btn" id="addTxn-ut" data-txn="ut"
+                  onclick="selectTxnType('add','ut')" aria-pressed="false">
+                  <i class="bi bi-geo-alt-fill"></i>
+                  <span class="txn-btn-title">Union Territory</span>
+                  <span class="txn-btn-sub">CGST + UTGST</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Compensation Cess (optional) -->
+            <div class="mb-4">
+              <div class="cess-toggle-row">
+                <label class="form-label fw-semibold mb-0">
+                  Compensation Cess <span class="optional-tag">Optional</span>
+                </label>
+                <div class="form-check form-switch">
+                  <input class="form-check-input" type="checkbox" id="addCessEnabled"
+                    role="switch" aria-label="Enable Compensation Cess"
+                    onchange="toggleCess('add')" />
+                </div>
+              </div>
+              <div id="addCessBox" class="cess-box d-none">
+                <div class="cess-info-text">
+                  <i class="bi bi-info-circle me-1 text-accent"></i>
+                  Applicable on 28%/40% goods: tobacco, luxury cars, aerated drinks, coal.
+                </div>
+                <div class="input-group mt-2">
+                  <input type="number" class="form-control" id="addCessRate"
+                    placeholder="e.g. 15" min="0" max="300" step="0.01"
+                    aria-label="Compensation cess rate" oninput="calculateAdd()" />
+                  <span class="input-group-text">%</span>
+                </div>
+                <!-- Cess Quick Picks -->
+                <div class="cess-quick-row mt-2">
+                  <button class="cess-quick-btn" onclick="setCessRate('add',1)">Cars 1%</button>
+                  <button class="cess-quick-btn" onclick="setCessRate('add',15)">Luxury 15%</button>
+                  <button class="cess-quick-btn" onclick="setCessRate('add',22)">SUVs 22%</button>
+                  <button class="cess-quick-btn" onclick="setCessRate('add',135)">Pan masala 135%</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="d-flex gap-2">
+              <button class="btn btn-primary-accent flex-grow-1" onclick="calculateAdd()">
+                <i class="bi bi-calculator me-2"></i>Calculate
+              </button>
+              <button class="btn btn-outline-secondary" onclick="resetAdd()" aria-label="Reset form">
+                <i class="bi bi-arrow-counterclockwise me-1"></i>Reset
+              </button>
+            </div>
+          </div>
+        </div><!-- /panel-add -->
+
+        <!-- ── REMOVE GST PANEL ── -->
+        <div id="panel-remove" role="tabpanel" aria-labelledby="tab-remove" class="d-none">
+          <div class="calc-card">
+            <h2 class="calc-card-title">
+              <i class="bi bi-dash-circle me-2 text-accent"></i>Remove GST from Amount
+            </h2>
+            <p class="calc-card-desc">Enter the GST-inclusive price — extract the original base amount and exact tax paid.</p>
+
+            <!-- Product Name -->
+            <div class="mb-3">
+              <label for="removeProductName" class="form-label fw-semibold">
+                Product / Service Name <span class="optional-tag">Optional</span>
+              </label>
+              <div class="input-group">
+                <span class="input-group-text bg-surface"><i class="bi bi-tag"></i></span>
+                <input type="text" class="form-control" id="removeProductName"
+                  placeholder="e.g. Mobile phone, Rent, Hotel bill…"
+                  maxlength="80" oninput="calculateRemove()"
+                  aria-label="Product or service name (optional)" />
+              </div>
+            </div>
+
+            <!-- Amount -->
+            <div class="mb-3">
+              <label for="removeAmount" class="form-label fw-semibold">GST-Inclusive Amount (₹)</label>
+              <div class="input-group input-group-lg">
+                <span class="input-group-text rupee-prefix">₹</span>
+                <input type="number" class="form-control calc-input" id="removeAmount"
+                  placeholder="0.00" min="0" step="0.01"
+                  aria-label="GST inclusive amount" oninput="calculateRemove()" />
+              </div>
+            </div>
+
+            <!-- GST Rate Quick Buttons -->
+            <div class="mb-3">
+              <label class="form-label fw-semibold">GST Rate</label>
+              <div class="rate-grid mb-2" role="group" aria-label="Select GST rate for remove">
+                <button class="rate-btn" onclick="selectRate('remove',0)"    data-rate="0"    aria-pressed="false">0%</button>
+                <button class="rate-btn" onclick="selectRate('remove',3)"    data-rate="3"    aria-pressed="false">3%</button>
+                <button class="rate-btn" onclick="selectRate('remove',5)"    data-rate="5"    aria-pressed="false">5%</button>
+                <button class="rate-btn" onclick="selectRate('remove',12)"   data-rate="12"   aria-pressed="false">12%</button>
+                <button class="rate-btn" onclick="selectRate('remove',18)"   data-rate="18"   aria-pressed="false">18%</button>
+                <button class="rate-btn" onclick="selectRate('remove',28)"   data-rate="28"   aria-pressed="false">28%</button>
+                <button class="rate-btn rate-btn-special" onclick="selectRate('remove',40)"   data-rate="40"   aria-pressed="false" title="Sin goods">40% <span class="rate-new">NEW</span></button>
+                <button class="rate-btn rate-btn-gold" onclick="selectRate('remove',1.5)"  data-rate="1.5"  aria-pressed="false" title="Diamonds">1.5%</button>
+                <button class="rate-btn rate-btn-custom" onclick="toggleCustomRate('remove')" data-rate="custom" aria-pressed="false">Custom</button>
+              </div>
+              <div id="removeCustomRate" class="custom-rate-input d-none">
+                <div class="input-group">
+                  <input type="number" class="form-control" id="removeCustomRateValue"
+                    placeholder="e.g. 6" min="0" max="100" step="0.01"
+                    aria-label="Custom GST rate" oninput="calculateRemove()" />
+                  <span class="input-group-text">%</span>
+                </div>
+              </div>
+              <div id="removeRateDisplay" class="rate-display d-none">
+                <i class="bi bi-check-circle-fill text-success me-1"></i>
+                Rate: <strong id="removeRateValue">–</strong>
+              </div>
+            </div>
+
+            <!-- Transaction Type -->
+            <div class="mb-3">
+              <label class="form-label fw-semibold">
+                Transaction Type
+                <button class="info-btn" onclick="showTxnInfo()" aria-label="Transaction type info">
+                  <i class="bi bi-question-circle"></i>
+                </button>
+              </label>
+              <div class="txn-type-grid" role="group" aria-label="Transaction type for remove">
+                <button class="txn-btn active" id="removeTxn-intra" data-txn="intra"
+                  onclick="selectTxnType('remove','intra')" aria-pressed="true">
+                  <i class="bi bi-house-fill"></i>
+                  <span class="txn-btn-title">Intra-state</span>
+                  <span class="txn-btn-sub">CGST + SGST</span>
+                </button>
+                <button class="txn-btn" id="removeTxn-inter" data-txn="inter"
+                  onclick="selectTxnType('remove','inter')" aria-pressed="false">
+                  <i class="bi bi-arrow-left-right"></i>
+                  <span class="txn-btn-title">Inter-state</span>
+                  <span class="txn-btn-sub">IGST only</span>
+                </button>
+                <button class="txn-btn" id="removeTxn-ut" data-txn="ut"
+                  onclick="selectTxnType('remove','ut')" aria-pressed="false">
+                  <i class="bi bi-geo-alt-fill"></i>
+                  <span class="txn-btn-title">Union Territory</span>
+                  <span class="txn-btn-sub">CGST + UTGST</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Compensation Cess -->
+            <div class="mb-4">
+              <div class="cess-toggle-row">
+                <label class="form-label fw-semibold mb-0">
+                  Compensation Cess <span class="optional-tag">Optional</span>
+                </label>
+                <div class="form-check form-switch">
+                  <input class="form-check-input" type="checkbox" id="removeCessEnabled"
+                    role="switch" aria-label="Enable Compensation Cess"
+                    onchange="toggleCess('remove')" />
+                </div>
+              </div>
+              <div id="removeCessBox" class="cess-box d-none">
+                <div class="cess-info-text">
+                  <i class="bi bi-info-circle me-1 text-accent"></i>
+                  Applicable on 28%/40% goods: tobacco, luxury cars, aerated drinks, coal.
+                </div>
+                <div class="input-group mt-2">
+                  <input type="number" class="form-control" id="removeCessRate"
+                    placeholder="e.g. 15" min="0" max="300" step="0.01"
+                    aria-label="Compensation cess rate" oninput="calculateRemove()" />
+                  <span class="input-group-text">%</span>
+                </div>
+                <div class="cess-quick-row mt-2">
+                  <button class="cess-quick-btn" onclick="setCessRate('remove',1)">Cars 1%</button>
+                  <button class="cess-quick-btn" onclick="setCessRate('remove',15)">Luxury 15%</button>
+                  <button class="cess-quick-btn" onclick="setCessRate('remove',22)">SUVs 22%</button>
+                  <button class="cess-quick-btn" onclick="setCessRate('remove',135)">Pan masala 135%</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="d-flex gap-2">
+              <button class="btn btn-primary-accent flex-grow-1" onclick="calculateRemove()">
+                <i class="bi bi-calculator me-2"></i>Calculate
+              </button>
+              <button class="btn btn-outline-secondary" onclick="resetRemove()" aria-label="Reset form">
+                <i class="bi bi-arrow-counterclockwise me-1"></i>Reset
+              </button>
+            </div>
+          </div>
+        </div><!-- /panel-remove -->
+
+      </div><!-- /col left -->
+
+      <!-- RIGHT: Results — Shivam Soni -->
+      <div class="col-lg-6">
+        <div id="resultsPlaceholder" class="results-placeholder">
+          <i class="bi bi-receipt display-3 mb-3"></i>
+          <p class="mb-1 fw-semibold">Results appear here</p>
+          <p class="mb-0 small">Enter an amount, select a GST rate<br/>and choose your transaction type.</p>
+        </div>
+
+        <div id="resultsCard" class="d-none">
+          <div class="calc-card result-card">
+
+            <!-- Result Header -->
+            <div class="d-flex align-items-start justify-content-between mb-3 flex-wrap gap-2">
+              <div>
+                <h2 class="calc-card-title mb-1">
+                  <i class="bi bi-receipt me-2 text-accent"></i>Tax Breakdown
+                </h2>
+                <div id="resProductName" class="res-product-name d-none"></div>
+              </div>
+              <div class="d-flex flex-column align-items-end gap-1">
+                <span class="result-type-badge" id="resultTypeBadge">Add GST</span>
+                <span class="txn-type-badge" id="resTxnBadge">Intra-state</span>
+              </div>
+            </div>
+
+            <!-- Main Result Rows -->
+            <div class="result-rows mb-3">
+              <div class="result-row">
+                <span class="result-label">Original Amount</span>
+                <span class="result-value" id="resOriginal">₹0.00</span>
+              </div>
+              <div class="result-row result-row-gst">
+                <span class="result-label">
+                  GST Amount
+                  <span class="result-rate-tag" id="resRateTag">@0%</span>
+                </span>
+                <span class="result-value text-accent" id="resGST">₹0.00</span>
+              </div>
+              <!-- Cess row — shown only when cess is enabled -->
+              <div class="result-row result-row-cess d-none" id="resCessRow">
+                <span class="result-label">
+                  Compensation Cess
+                  <span class="result-rate-tag result-cess-tag" id="resCessTag">@0%</span>
+                </span>
+                <span class="result-value text-warning" id="resCess">₹0.00</span>
+              </div>
+              <div class="result-row result-row-total">
+                <span class="result-label fw-bold">Final Amount</span>
+                <span class="result-value fw-bold" id="resTotal">₹0.00</span>
+              </div>
+            </div>
+
+            <!-- Tax Component Breakdown — THE KEY FEATURE -->
+            <div class="breakdown-section">
+              <div class="breakdown-title">
+                <i class="bi bi-diagram-3-fill me-2"></i>Tax Components
+              </div>
+
+              <!-- INTRA-STATE / UT: CGST + SGST or CGST + UTGST -->
+              <div id="breakdownIntra" class="row g-2 mt-1">
+                <div class="col-6">
+                  <div class="breakdown-card breakdown-cgst">
+                    <div class="breakdown-card-label">CGST</div>
+                    <div class="breakdown-card-value" id="resCGST">₹0.00</div>
+                    <div class="breakdown-card-sub" id="resCGSTRate">@0%</div>
+                  </div>
+                </div>
+                <div class="col-6">
+                  <div class="breakdown-card breakdown-sgst" id="sgstCard">
+                    <div class="breakdown-card-label" id="sgstLabel">SGST</div>
+                    <div class="breakdown-card-value" id="resSGST">₹0.00</div>
+                    <div class="breakdown-card-sub" id="resSGSTRate">@0%</div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- INTER-STATE: IGST only -->
+              <div id="breakdownInter" class="d-none mt-1">
+                <div class="igst-card">
+                  <div class="igst-left">
+                    <div class="igst-label">IGST</div>
+                    <div class="igst-sub">Integrated GST — Inter-state / Import</div>
+                  </div>
+                  <div class="igst-value" id="resIGST">₹0.00</div>
+                </div>
+                <div class="igst-zero-row">
+                  <span class="igst-zero-item"><strong>CGST</strong> = ₹0.00 <span class="igst-zero-reason">(not applicable inter-state)</span></span>
+                  <span class="igst-zero-item"><strong>SGST</strong> = ₹0.00 <span class="igst-zero-reason">(not applicable inter-state)</span></span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="d-flex flex-wrap gap-2 mt-4">
+              <button class="btn btn-copy flex-grow-1" onclick="copyResult()">
+                <i class="bi bi-clipboard me-1"></i>Copy
+              </button>
+              <button class="btn btn-share" onclick="shareWhatsApp()">
+                <i class="bi bi-whatsapp me-1"></i>WhatsApp
+              </button>
+              <button class="btn btn-share-email" onclick="shareEmail()">
+                <i class="bi bi-envelope me-1"></i>Email
+              </button>
+            </div>
+          </div>
+        </div><!-- /resultsCard -->
+      </div><!-- /col right -->
+
+    </div><!-- /row -->
+
+    <!-- Transaction Type Info Modal (inline) — Shivam Soni -->
+    <div id="txnInfoModal" class="txn-info-modal d-none" role="dialog" aria-modal="true" aria-label="Transaction type guide">
+      <div class="txn-info-content">
+        <div class="d-flex justify-content-between align-items-start mb-3">
+          <h3 class="txn-info-title"><i class="bi bi-book me-2 text-accent"></i>Transaction Type Guide</h3>
+          <button class="btn-close-modal" onclick="hideTxnInfo()" aria-label="Close guide">
+            <i class="bi bi-x-lg"></i>
+          </button>
+        </div>
+        <div class="txn-info-grid">
+          <div class="txn-info-card">
+            <div class="txn-info-icon"><i class="bi bi-house-fill"></i></div>
+            <div class="txn-info-body">
+              <strong>Intra-state</strong>
+              <p>Buyer and seller are in the <em>same state</em>. GST is split equally: CGST (Central) + SGST (State).</p>
+              <div class="txn-info-example">₹10,000 @ 18% → CGST ₹900 + SGST ₹900 = ₹1,800</div>
+            </div>
+          </div>
+          <div class="txn-info-card">
+            <div class="txn-info-icon"><i class="bi bi-arrow-left-right"></i></div>
+            <div class="txn-info-body">
+              <strong>Inter-state</strong>
+              <p>Buyer and seller are in <em>different states</em>, or transaction involves import/export. Only IGST applies — CGST & SGST are ₹0.</p>
+              <div class="txn-info-example">₹10,000 @ 18% → IGST ₹1,800 (CGST = SGST = ₹0)</div>
+            </div>
+          </div>
+          <div class="txn-info-card">
+            <div class="txn-info-icon"><i class="bi bi-geo-alt-fill"></i></div>
+            <div class="txn-info-body">
+              <strong>Union Territory (no legislature)</strong>
+              <p>Applies in Ladakh, Andaman &amp; Nicobar, Chandigarh, Dadra &amp; NH, Daman &amp; Diu, Lakshadweep. CGST + UTGST (instead of SGST).</p>
+              <div class="txn-info-example">₹10,000 @ 18% → CGST ₹900 + UTGST ₹900 = ₹1,800</div>
+            </div>
+          </div>
+        </div>
+        <p class="txn-info-note">
+          <i class="bi bi-info-circle me-1"></i>
+          Delhi, J&amp;K, and Puducherry have their own legislatures, so SGST (not UTGST) applies there.
+        </p>
+      </div>
+    </div>
+
+    <!-- ── HISTORY SECTION — Shivam Soni ── -->
+    <section id="historySection" class="mt-5 pt-2" aria-labelledby="historyHeading">
+      <div class="section-header">
+        <div>
+          <h2 class="section-title" id="historyHeading">
+            <i class="bi bi-clock-history me-2 text-accent"></i>Calculation History
+          </h2>
+          <p class="section-sub">Last 10 calculations saved in your browser.</p>
+        </div>
+        <div class="d-flex gap-2 flex-wrap">
+          <button class="btn btn-outline-accent btn-sm" onclick="exportCSV()">
+            <i class="bi bi-download me-1"></i>Export CSV
+          </button>
+          <button class="btn btn-outline-danger btn-sm" onclick="clearHistory()">
+            <i class="bi bi-trash me-1"></i>Clear
+          </button>
+        </div>
+      </div>
+
+      <!-- Desktop Table -->
+      <div class="history-table-wrap d-none d-md-block">
+        <table class="table history-table" aria-label="Calculation history">
+          <thead>
+            <tr>
+              <th>Mode</th>
+              <th>Product</th>
+              <th>Amount</th>
+              <th>Rate</th>
+              <th>Type</th>
+              <th>GST</th>
+              <th>Cess</th>
+              <th>Total</th>
+              <th>Date &amp; Time</th>
+            </tr>
+          </thead>
+          <tbody id="historyTableBody"></tbody>
+        </table>
+      </div>
+
+      <!-- Mobile Cards -->
+      <div class="d-md-none" id="historyCards"></div>
+
+      <!-- Empty State -->
+      <div id="historyEmpty" class="history-empty">
+        <i class="bi bi-inbox display-4 mb-3"></i>
+        <p>No calculations yet. Results appear here automatically after each calculation.</p>
+      </div>
+    </section>
+
+    <!-- ── GST REFERENCE SECTION — Shivam Soni ── -->
+    <section class="mt-5 pt-2" aria-labelledby="gstInfoHeading">
+      <div class="section-header mb-4">
+        <div>
+          <h2 class="section-title" id="gstInfoHeading">
+            <i class="bi bi-info-circle me-2 text-accent"></i>GST Slabs &amp; Reference
+          </h2>
+          <p class="section-sub">All active rates — CA-verified as of 2025-26.</p>
+        </div>
+      </div>
+      <div class="row g-3" id="gstInfoCards"></div>
+    </section>
+
+  </div><!-- /toolPanel-gst -->
+
+  <!-- ────────────────────────────────────────────────────
+       TOOL PANEL: SCIENTIFIC CALCULATOR — Shivam Soni
+  ─────────────────────────────────────────────────────── -->
+  <div id="toolPanel-sci" class="tool-panel d-none">
+    <div class="row justify-content-center">
+      <div class="col-12 col-sm-10 col-md-8 col-lg-6 col-xl-5">
+        <div class="calc-card sci-card">
+          <h2 class="calc-card-title mb-4">
+            <i class="bi bi-calculator-fill me-2 text-accent"></i>Scientific Calculator
+          </h2>
+
+          <!-- Display -->
+          <div class="sci-display" aria-live="polite" aria-label="Calculator display">
+            <div class="sci-expression" id="sciExpression">&nbsp;</div>
+            <div class="sci-result" id="sciResult">0</div>
+          </div>
+
+          <!-- DEG / RAD toggle -->
+          <div class="d-flex align-items-center gap-2 mb-3">
+            <span class="sci-mode-label">Angle:</span>
+            <div class="sci-mode-toggle">
+              <button class="sci-mode-btn active" id="modeDeg" onclick="setAngleMode('deg')">DEG</button>
+              <button class="sci-mode-btn" id="modeRad" onclick="setAngleMode('rad')">RAD</button>
+            </div>
+            <span class="sci-mode-indicator ms-auto" id="sciMemLabel" aria-label="Memory stored">M</span>
+          </div>
+
+          <!-- Keypad -->
+          <div class="sci-keypad">
+            <button class="sci-btn sci-fn" onclick="sciInput('sin(')">sin</button>
+            <button class="sci-btn sci-fn" onclick="sciInput('cos(')">cos</button>
+            <button class="sci-btn sci-fn" onclick="sciInput('tan(')">tan</button>
+            <button class="sci-btn sci-fn" onclick="sciInput('log(')">log</button>
+            <button class="sci-btn sci-fn" onclick="sciInput('ln(')">ln</button>
+
+            <button class="sci-btn sci-fn" onclick="sciInput('asin(')">sin⁻¹</button>
+            <button class="sci-btn sci-fn" onclick="sciInput('acos(')">cos⁻¹</button>
+            <button class="sci-btn sci-fn" onclick="sciInput('atan(')">tan⁻¹</button>
+            <button class="sci-btn sci-fn" onclick="sciInput('sqrt(')">√</button>
+            <button class="sci-btn sci-fn" onclick="sciInput('^')">xʸ</button>
+
+            <button class="sci-btn sci-fn" onclick="sciInput('π')">π</button>
+            <button class="sci-btn sci-fn" onclick="sciInput('e')">e</button>
+            <button class="sci-btn sci-fn" onclick="sciInput('abs(')">|x|</button>
+            <button class="sci-btn sci-mem" onclick="sciMemStore()">MS</button>
+            <button class="sci-btn sci-mem" onclick="sciMemRecall()">MR</button>
+
+            <button class="sci-btn sci-op"  onclick="sciInput('(')">(</button>
+            <button class="sci-btn sci-op"  onclick="sciInput(')')">)</button>
+            <button class="sci-btn sci-op"  onclick="sciInput('%')">%</button>
+            <button class="sci-btn sci-clear"     onclick="sciClearEntry()">CE</button>
+            <button class="sci-btn sci-clear-all" onclick="sciClearAll()">AC</button>
+
+            <button class="sci-btn sci-num" onclick="sciInput('7')">7</button>
+            <button class="sci-btn sci-num" onclick="sciInput('8')">8</button>
+            <button class="sci-btn sci-num" onclick="sciInput('9')">9</button>
+            <button class="sci-btn sci-op"  onclick="sciInput('/')">÷</button>
+            <button class="sci-btn sci-back" onclick="sciBackspace()"><i class="bi bi-backspace"></i></button>
+
+            <button class="sci-btn sci-num" onclick="sciInput('4')">4</button>
+            <button class="sci-btn sci-num" onclick="sciInput('5')">5</button>
+            <button class="sci-btn sci-num" onclick="sciInput('6')">6</button>
+            <button class="sci-btn sci-op"  onclick="sciInput('*')">×</button>
+            <button class="sci-btn sci-fn"  onclick="sciToggleSign()">+/−</button>
+
+            <button class="sci-btn sci-num" onclick="sciInput('1')">1</button>
+            <button class="sci-btn sci-num" onclick="sciInput('2')">2</button>
+            <button class="sci-btn sci-num" onclick="sciInput('3')">3</button>
+            <button class="sci-btn sci-op"  onclick="sciInput('-')">−</button>
+            <button class="sci-btn sci-fn"  onclick="sciSquare()">x²</button>
+
+            <button class="sci-btn sci-num sci-zero" onclick="sciInput('0')">0</button>
+            <button class="sci-btn sci-num" onclick="sciInput('.')">.</button>
+            <button class="sci-btn sci-op"  onclick="sciInput('+')">+</button>
+            <button class="sci-btn sci-equals" onclick="sciEvaluate()">=</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div><!-- /toolPanel-sci -->
+
+  <!-- ────────────────────────────────────────────────────
+       TOOL PANEL: UNIT CONVERTER — Shivam Soni
+  ─────────────────────────────────────────────────────── -->
+  <div id="toolPanel-unit" class="tool-panel d-none">
+    <div class="row justify-content-center">
+      <div class="col-12 col-md-10 col-lg-8 col-xl-7">
+        <div class="calc-card">
+          <h2 class="calc-card-title mb-4">
+            <i class="bi bi-arrow-left-right me-2 text-accent"></i>Unit Converter
+          </h2>
+
+          <!-- Category Picker -->
+          <div class="unit-category-grid mb-4" role="group" aria-label="Unit category">
+            <button class="unit-cat-btn active" data-cat="length"      onclick="selectUnitCat('length')"><i class="bi bi-rulers"></i><span>Length</span></button>
+            <button class="unit-cat-btn" data-cat="weight"             onclick="selectUnitCat('weight')"><i class="bi bi-speedometer2"></i><span>Weight</span></button>
+            <button class="unit-cat-btn" data-cat="temperature"        onclick="selectUnitCat('temperature')"><i class="bi bi-thermometer-half"></i><span>Temp</span></button>
+            <button class="unit-cat-btn" data-cat="area"               onclick="selectUnitCat('area')"><i class="bi bi-bounding-box"></i><span>Area</span></button>
+            <button class="unit-cat-btn" data-cat="volume"             onclick="selectUnitCat('volume')"><i class="bi bi-cup-straw"></i><span>Volume</span></button>
+            <button class="unit-cat-btn" data-cat="speed"              onclick="selectUnitCat('speed')"><i class="bi bi-lightning-charge"></i><span>Speed</span></button>
+            <button class="unit-cat-btn" data-cat="data"               onclick="selectUnitCat('data')"><i class="bi bi-hdd"></i><span>Data</span></button>
+            <button class="unit-cat-btn" data-cat="time"               onclick="selectUnitCat('time')"><i class="bi bi-stopwatch"></i><span>Time</span></button>
+          </div>
+
+          <!-- Converter Row -->
+          <div class="unit-converter-row">
+            <div class="unit-field">
+              <label class="form-label fw-semibold" for="unitFromVal">From</label>
+              <input type="number" class="form-control calc-input" id="unitFromVal"
+                placeholder="Enter value" oninput="convertUnit('from')" aria-label="Value to convert" />
+              <select class="form-select unit-select mt-2" id="unitFromUnit"
+                onchange="convertUnit('from')" aria-label="From unit"></select>
+            </div>
+            <button class="unit-swap-btn" onclick="swapUnits()" aria-label="Swap units">
+              <i class="bi bi-arrow-left-right"></i>
+            </button>
+            <div class="unit-field">
+              <label class="form-label fw-semibold" for="unitToVal">To</label>
+              <input type="number" class="form-control calc-input" id="unitToVal"
+                placeholder="Result" oninput="convertUnit('to')" aria-label="Converted value" />
+              <select class="form-select unit-select mt-2" id="unitToUnit"
+                onchange="convertUnit('from')" aria-label="To unit"></select>
+            </div>
+          </div>
+
+          <!-- Formula -->
+          <div class="unit-formula mt-3" id="unitFormula" aria-live="polite">
+            Select a value above to see the conversion formula.
+          </div>
+
+          <!-- Quick Reference -->
+          <div class="unit-quick-ref mt-4" id="unitQuickRef"></div>
+        </div>
+      </div>
+    </div>
+  </div><!-- /toolPanel-unit -->
+
+</main>
+
+<!-- ═══════════════ FOOTER — © 2024 Shivam Soni ═══════════════ -->
+<footer class="gst-footer mt-5">
+  <div class="container-xl text-center">
+    <div class="footer-brand mb-2">
+      <i class="bi bi-receipt-cutoff me-2"></i>GST<span class="brand-accent">Pro</span>
+      <span class="brand-version ms-1">v3</span>
+    </div>
+    <p class="footer-text">
+      Built for Indian businesses, freelancers &amp; students.
+      Calculations are indicative — verify with a CA for compliance.
+    </p>
+    <p class="footer-author">
+      Designed &amp; Developed by <strong>Shivam Soni</strong>
+    </p>
+    <p class="footer-copy">© 2024 Shivam Soni. All rights reserved.</p>
+  </div>
+</footer>
+
+<!-- Toast Notification -->
+<div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index:9999">
+  <div id="toastMsg" class="toast align-items-center border-0" role="alert" aria-live="assertive" aria-atomic="true">
+    <div class="d-flex">
+      <div class="toast-body" id="toastText">Done!</div>
+      <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="script.js"></script>
+
+<!--
+  ================================================================
+   End of GST Calculator Pro v3
+   Author  : Shivam Soni
+   © 2024 Shivam Soni. All rights reserved.
+  ================================================================
+-->
+</body>
+</html>
